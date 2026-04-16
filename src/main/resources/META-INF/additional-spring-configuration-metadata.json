@@ -1,0 +1,37 @@
+{"properties": [
+  {
+    "name": "jwt.expiration",
+    "type": "java.lang.String",
+    "description": "expiration time for JWT tokens (e.g., '3600000' for 1 hour)"
+  },
+  {
+    "name": "jwt.secret",
+    "type": "java.lang.String",
+    "description": "secret key for signing JWT tokens"
+  },
+  {
+    "name": "cors.exposed-headers",
+    "type": "java.lang.String",
+    "description": "Headers that are exposed to the browser in CORS responses (e.g., 'Authorization,Content-Type')"
+  },
+  {
+    "name": "cors.allowed-headers",
+    "type": "java.lang.String",
+    "description": "Headers that are allowed in CORS requests (e.g., 'Authorization,Content-Type')"
+  },
+  {
+    "name": "cors.allowed-methods",
+    "type": "java.lang.String",
+    "description": "Methods that are allowed in CORS requests (e.g., 'GET,POST,PUT,DELETE')"
+  },
+  {
+    "name": "cors.allowed-origins",
+    "type": "java.lang.String",
+    "description": "Origins that are allowed in CORS requests (e.g., 'http://localhost:3000')"
+  },
+  {
+    "name": "jwt.refresh-expiration",
+    "type": "java.lang.String",
+    "description": "expiration time for JWT refresh tokens (e.g., '86400000' for 24 hours)"
+  }
+]}
