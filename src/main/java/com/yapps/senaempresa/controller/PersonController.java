@@ -1,5 +1,7 @@
 package com.yapps.senaempresa.controller;
 
+import com.ada.ecosystem.core.v1.pageable.PageDto;
+import com.ada.ecosystem.core.v1.query.EcosystemRequestQuery;
 import com.yapps.senaempresa.model.dto.NewUserDto;
 import com.yapps.senaempresa.model.dto.UserDetailsDto;
 import com.yapps.senaempresa.model.dto.UserListDto;
@@ -11,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import jakarta.validation.Valid;
 
 @RestController
@@ -22,8 +23,9 @@ public class PersonController {
     private final PersonService personService;
 
     @GetMapping
-    public ResponseEntity<List<UserListDto>> getAllPersons() {
-        return new ResponseEntity<>(personService.getAllPersons(), HttpStatus.OK);
+    public ResponseEntity<PageDto<UserListDto>> getAllPersons(
+            @RequestBody(required = true) EcosystemRequestQuery ecosystemRequestQuery) {
+        return new ResponseEntity<>(personService.getAllPersons(ecosystemRequestQuery), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")
@@ -37,7 +39,8 @@ public class PersonController {
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<ProcessResult<String>> updatePerson(@PathVariable Long userId, @RequestBody UserDetailsDto personDto) {
+    public ResponseEntity<ProcessResult<String>> updatePerson(@PathVariable Long userId,
+            @RequestBody UserDetailsDto personDto) {
         return new ResponseEntity<>(personService.updatePerson(userId, personDto), HttpStatus.OK);
     }
 }

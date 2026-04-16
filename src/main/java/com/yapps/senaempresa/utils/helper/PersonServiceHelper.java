@@ -41,8 +41,8 @@ public class PersonServiceHelper {
     public void validateUniqueKeys(Long userId, UserDetailsDto personDto) {
         StringBuilder errorMessage = new StringBuilder();
 
-        if(existingAccount(personDto.getUserIdentification())) {
-            errorMessage.append("Person with identification already exists. ");
+        if(!existingAccount(personDto.getUserIdentification())) {
+            errorMessage.append("Person with identification does not exist. ");
         }
 
         if (accountRepository.existsByUserLoginAndUserIdNot(personDto.getUserIdentification(), userId)) {

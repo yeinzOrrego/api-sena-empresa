@@ -26,11 +26,21 @@
     </repositories>
 
     <dependencies>
-        <!-- <dependency>
+        <dependency>
             <groupId>com.github.yeinzOrrego</groupId>
             <artifactId>ecosystem-core</artifactId>
-            <version>main-SNAPSHOT</version>
-        </dependency> -->
+            <version>1.0.1</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.jsonwebtoken</groupId>
+                    <artifactId>jjwt</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.cloud</groupId>
+                    <artifactId>spring-cloud-starter-openfeign</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -1,16 +1,17 @@
 package com.yapps.senaempresa.utils.mapper;
 
+import com.ada.ecosystem.core.v1.pageable.PageDto;
 import com.yapps.senaempresa.config.GlobalMapperConfig;
 import com.yapps.senaempresa.model.dto.NewUserDto;
 import com.yapps.senaempresa.model.dto.UserDetailsDto;
 import com.yapps.senaempresa.model.dto.UserListDto;
 import com.yapps.senaempresa.model.entity.Account;
 
-import java.util.List;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.springframework.data.domain.Page;
 
 @Mapper(config = GlobalMapperConfig.class)
 public interface PersonMapper {
@@ -20,7 +21,7 @@ public interface PersonMapper {
 
     UserListDto toDto(Account entity);
 
-    List<UserListDto> toDtoList(List<Account> entities);
+    PageDto<UserListDto> toPageDto(Page<Account> entities);
 
     @Mapping(target = "userLogin", source = "userIdentification")
     Account toEntity(NewUserDto dto);

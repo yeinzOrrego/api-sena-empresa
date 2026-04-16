@@ -1,5 +1,9 @@
 package com.yapps.senaempresa.service.impl;
 
+import com.ada.ecosystem.core.v1.pageable.PageDto;
+import com.ada.ecosystem.core.v1.query.EcosystemRequestQuery;
+import com.ada.ecosystem.core.v1.query.SearchSpecifications;
+import com.ada.ecosystem.core.v1.service.EcosystemService;
 import com.yapps.senaempresa.model.dto.NewUserDto;
 import com.yapps.senaempresa.model.dto.UserDetailsDto;
 import com.yapps.senaempresa.model.dto.UserListDto;
@@ -12,16 +16,16 @@ import com.yapps.senaempresa.utils.response.ProcessResult;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PersonServiceImpl implements PersonService {
+public class PersonServiceImpl extends EcosystemService implements PersonService  {
 
     private final AccountRepository accountRepository;
     private final PersonMapper personMapper;
@@ -30,8 +34,12 @@ public class PersonServiceImpl implements PersonService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<UserListDto> getAllPersons() {
-        return personMapper.toDtoList(accountRepository.findAll());
+    public PageDto<UserListDto> getAllPersons(EcosystemRequestQuery ecosystemRequestQuery) {
+        Pageable pageable = this.getPageable(ecosystemRequestQuery.getPage(), ecosystemRequestQuery.getSize(),
+				ecosystemRequestQuery.getOrdersBy());
+		SearchSpecifications<Account> especificacion = getSearchSpecifications(
+				ecosystemRequestQuery.getSearchsBy());
+        return personMapper.toPageDto(accountRepository.findAll(especificacion, pageable));
     }
 
     @Override
