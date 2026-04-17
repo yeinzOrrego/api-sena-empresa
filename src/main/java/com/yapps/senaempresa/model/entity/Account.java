@@ -5,6 +5,7 @@ import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.yapps.senaempresa.utils.enums.StatusEnum;
 
 import java.util.Collection;
 import java.util.Date;
@@ -63,7 +64,7 @@ public class Account implements UserDetails {
             return List.of();
 
         return this.userRoles.stream()
-                .filter(role -> role.getRole() != null && "A".equalsIgnoreCase(role.getStatus()))
+                .filter(role -> role.getRole() != null && StatusEnum.ACTIVO.getValue().equalsIgnoreCase(role.getStatus()))
                 .map(role -> {
                     String roleName = role.getRole().getRoleName().toUpperCase();
                     return new SimpleGrantedAuthority("ROLE_" + roleName);

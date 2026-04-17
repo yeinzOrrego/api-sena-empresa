@@ -17,7 +17,7 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     Optional<Account> findByUserLogin(String username);
 
     @EntityGraph(attributePaths = {"userRoles", "userRoles.role"})
-    Optional<Account> findWithRolesByUserLogin(String username);
+    Optional<Account> findWithRolesByUserLoginAndStatus(String username, String status);
 
     @EntityGraph(attributePaths = {"userRoles", "userRoles.role"})
     Optional<Account> findWithRolesByUserId(Long userId);

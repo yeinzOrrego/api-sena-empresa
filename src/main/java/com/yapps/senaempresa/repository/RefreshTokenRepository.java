@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RefreshTokenRepository extends JpaRepository<RefreshToken, Long> {
-    Optional<RefreshToken> findByRefreshToken(String token);
+    Optional<RefreshToken> findByRefreshTokenAndStatus(String token, String status);
 
     List<RefreshToken> findAllByUserAndStatus(Account user, String status);
 }

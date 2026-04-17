@@ -21,7 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
+import com.yapps.senaempresa.utils.enums.StatusEnum;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +31,8 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
     private final PersonMapper personMapper;
     private final PasswordEncoder passwordEncoder;
     private final PersonServiceHelper personServiceHelper;
+
+    private static final String INACTIVE_STATUS = StatusEnum.INACTIVO.getValue();
 
     @Override
     @Transactional(readOnly = true)
@@ -56,7 +58,7 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
 
         Account entity = personMapper.toEntity(personDto);
         entity.setUserPassword(passwordEncoder.encode(personDto.getUserPassword()));
-        entity.setStatus("N");
+        entity.setStatus(INACTIVE_STATUS);
         entity = accountRepository.save(entity);
 
         return ProcessResult.<String>builder()

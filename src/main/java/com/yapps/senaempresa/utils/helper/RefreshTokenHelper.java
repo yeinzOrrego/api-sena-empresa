@@ -3,6 +3,7 @@ package com.yapps.senaempresa.utils.helper;
 import com.yapps.senaempresa.model.entity.Account;
 import com.yapps.senaempresa.model.entity.RefreshToken;
 import com.yapps.senaempresa.repository.RefreshTokenRepository;
+import com.yapps.senaempresa.utils.enums.StatusEnum;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,6 +21,8 @@ public class RefreshTokenHelper {
 
     @Value("${jwt.refresh-expiration}")
     private long refreshTokenDurationMs;
+    private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
+    private static final String INACTIVE_STATUS = StatusEnum.INACTIVO.getValue();
 
     private final RefreshTokenRepository refreshTokenRepository;
 
@@ -33,7 +36,7 @@ public class RefreshTokenHelper {
                 .refreshToken(UUID.randomUUID().toString())
                 .expiresAt(Date.from(Instant.now().plusMillis(refreshTokenDurationMs)))
                 .createdAt(new Date())
-                .status("A")
+                .status(ACTIVE_STATUS)
                 .build();
                 
         return refreshTokenRepository.save(refreshToken);
@@ -41,7 +44,7 @@ public class RefreshTokenHelper {
 
     public boolean verifyExpiration(RefreshToken token) {
         if (token.getExpiresAt().before(new Date())) {
-            token.setStatus("N");
+            token.setStatus(INACTIVE_STATUS);
             refreshTokenRepository.save(token);
             throw new RuntimeException("Refresh token is expired. Please sign in again.");
         }
@@ -49,15 +52,15 @@ public class RefreshTokenHelper {
     }
 
     public RefreshToken findByToken(String token) {
-        return refreshTokenRepository.findByRefreshToken(token)
+        return refreshTokenRepository.findByRefreshTokenAndStatus(token, ACTIVE_STATUS)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
     }
 
     private void invalidateExistingTokens(Account user) {
-        List<RefreshToken> existingTokens = refreshTokenRepository.findAllByUserAndStatus(user, "A");
+        List<RefreshToken> existingTokens = refreshTokenRepository.findAllByUserAndStatus(user, ACTIVE_STATUS);
 
         // Mark existing tokens as inactive
-        existingTokens.forEach(token -> token.setStatus("N"));
+        existingTokens.forEach(token -> token.setStatus(INACTIVE_STATUS));
 
         refreshTokenRepository.saveAll(existingTokens);
     }
