@@ -1,8 +1,9 @@
 package com.yapps.senaempresa.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
+import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
@@ -10,6 +11,8 @@ import java.util.Date;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class NewUserDto {
 
     @NotBlank(message = "La contraseña es obligatoria")

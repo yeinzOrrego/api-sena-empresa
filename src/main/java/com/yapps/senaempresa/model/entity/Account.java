@@ -1,7 +1,11 @@
 package com.yapps.senaempresa.model.entity;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -12,6 +16,9 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
 @Table(name = "USERS")
 public class Account implements UserDetails {
@@ -55,7 +62,7 @@ public class Account implements UserDetails {
     @Column(nullable = false, length = 1)
     private String status;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<ApplicationUserRole> userRoles;
 
     @Override

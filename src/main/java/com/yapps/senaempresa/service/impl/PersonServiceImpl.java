@@ -25,7 +25,7 @@ import com.yapps.senaempresa.utils.enums.StatusEnum;
 
 @Service
 @RequiredArgsConstructor
-public class PersonServiceImpl extends EcosystemService implements PersonService  {
+public class PersonServiceImpl extends EcosystemService implements PersonService {
 
     private final AccountRepository accountRepository;
     private final PersonMapper personMapper;
@@ -38,9 +38,9 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
     @Transactional(readOnly = true)
     public PageDto<UserListDto> getAllPersons(EcosystemRequestQuery ecosystemRequestQuery) {
         Pageable pageable = this.getPageable(ecosystemRequestQuery.getPage(), ecosystemRequestQuery.getSize(),
-				ecosystemRequestQuery.getOrdersBy());
-		SearchSpecifications<Account> especificacion = getSearchSpecifications(
-				ecosystemRequestQuery.getSearchsBy());
+                ecosystemRequestQuery.getOrdersBy());
+        SearchSpecifications<Account> especificacion = getSearchSpecifications(
+                ecosystemRequestQuery.getSearchsBy());
         return personMapper.toPageDto(accountRepository.findAll(especificacion, pageable));
     }
 
@@ -75,15 +75,19 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
         personServiceHelper.validateUniqueKeys(userId, personDto);
         personServiceHelper.validateIntegrity(userId, personDto);
 
-        Account existingPerson = accountRepository.findById(userId)
+        Account existingPerson = accountRepository.findWithRolesByUserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Person not found"));
 
         personMapper.updateEntity(existingPerson, personDto);
-        
-        Account savedEntity = accountRepository.save(existingPerson);
+
+        Account updateAccount = INACTIVE_STATUS.equals(personDto.getStatus())
+                ? personServiceHelper.disableAccount(personDto, existingPerson)
+                : personServiceHelper.updateAccount(personDto, existingPerson);
+
+        updateAccount = accountRepository.save(updateAccount);
 
         return ProcessResult.<String>builder()
-                .result(savedEntity.getUserId().toString())
+                .result(updateAccount.getUserId().toString())
                 .message("User updated successfully")
                 .resultCode((long) HttpStatus.OK.value())
                 .build();
