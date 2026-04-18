@@ -11,8 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import com.yapps.senaempresa.utils.enums.StatusEnum;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -51,7 +51,7 @@ public class Account implements UserDetails {
     private String userEmail;
 
     @Column(nullable = false)
-    private Date dateCreated;
+    private LocalDateTime dateCreated;
 
     @Column(nullable = false, length = 500)
     private String userFirstname;

@@ -1,5 +1,7 @@
 package com.yapps.senaempresa.model.entity;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -28,8 +30,8 @@ public class Role {
     private String status;
     
     @Column(name = "DATE_CREATED")
-    private String dateCreated;
+    private LocalDateTime dateCreated;
     
     @Column(name = "USER_CREATED")
-    private String userCreated;
+    private Long userCreated;
 }

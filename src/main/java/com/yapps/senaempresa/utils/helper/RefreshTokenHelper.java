@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.time.Instant;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Component
@@ -34,8 +34,8 @@ public class RefreshTokenHelper {
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(account)
                 .refreshToken(UUID.randomUUID().toString())
-                .expiresAt(Date.from(Instant.now().plusMillis(refreshTokenDurationMs)))
-                .createdAt(new Date())
+                .expiresAt(Instant.now().plusMillis(refreshTokenDurationMs))
+                .createdAt(LocalDateTime.now())
                 .status(ACTIVE_STATUS)
                 .build();
                 
@@ -43,7 +43,7 @@ public class RefreshTokenHelper {
     }
 
     public boolean verifyExpiration(RefreshToken token) {
-        if (token.getExpiresAt().before(new Date())) {
+        if (token.getExpiresAt().isBefore(Instant.now())) {
             token.setStatus(INACTIVE_STATUS);
             refreshTokenRepository.save(token);
             throw new RuntimeException("Refresh token is expired. Please sign in again.");

@@ -1,7 +1,7 @@
 package com.yapps.senaempresa.utils.helper;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -137,7 +137,7 @@ public class PersonServiceHelper {
                         .role(Role.builder()
                         .roleId(roleId)
                         .build())
-                        .dateCreated(new Date())
+                        .dateCreated(LocalDateTime.now())
                         .userCreated(personDto.getUserCreated())
                         .status(ACTIVE_STATUS)
                         .build())

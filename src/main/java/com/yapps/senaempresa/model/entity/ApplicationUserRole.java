@@ -1,6 +1,7 @@
 package com.yapps.senaempresa.model.entity;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,7 +39,7 @@ public class ApplicationUserRole {
 	@Column(nullable = false, length = 1)
 	private String status;
 
-	private Date dateCreated;
+	private LocalDateTime dateCreated;
 	private Long userCreated;
 
 }
