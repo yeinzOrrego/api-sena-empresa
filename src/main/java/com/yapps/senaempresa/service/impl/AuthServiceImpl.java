@@ -33,6 +33,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public AuthResponseDto authenticate(AuthRequestDto request) {
+        log.info("Starting authentication process for user: {}", request.getUsername());
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
@@ -41,9 +43,12 @@ public class AuthServiceImpl implements AuthService {
         );
 
         Account account = (Account) authentication.getPrincipal();
+        log.info("Authentication successful for user: {}", account.getUserId());
 
         String jwtToken = jwtService.generateToken(extraClaims(account), account);
         String refreshToken = refreshTokenHelper.generateRefreshToken(account).getRefreshToken();
+
+        log.info("Tokens generated successfully for user: {}", account.getUserId());
 
         return AuthResponseDto.builder()
                 .accessToken(jwtToken)
@@ -54,6 +59,8 @@ public class AuthServiceImpl implements AuthService {
     @Override 
     @Transactional
     public AuthResponseDto refreshToken(String refreshToken, String accessToken) {
+        log.info("Starting token refresh process");
+
         if (accessToken != null && accessToken.startsWith("Bearer ")) {
             accessToken = accessToken.substring(7);
         }
@@ -61,16 +68,23 @@ public class AuthServiceImpl implements AuthService {
         RefreshToken token = refreshTokenHelper.findByToken(refreshToken);
 
         if (!refreshTokenHelper.verifyExpiration(token)) {
+            log.warn("Failed token refresh: Refresh token is expired or invalid for user: {}", token.getUser().getUserId());
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
         String username = jwtService.extractUsername(accessToken);
+        log.info("Refreshing token for identified user: {}", username);
 
         Account account = accountRepository.findByUserLogin(username)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> {
+                    log.error("Failed token refresh: User {} not found", username);
+                    return new IllegalArgumentException("User not found");
+                });
 
         String newJwtToken = jwtService.generateToken(extraClaims(account), account);
         String newRefreshToken = refreshTokenHelper.generateRefreshToken(account).getRefreshToken();
+
+        log.info("New tokens generated successfully for user: {}", account.getUserId());
 
         return AuthResponseDto.builder()
                 .accessToken(newJwtToken)

@@ -1,5 +1,6 @@
 package com.yapps.senaempresa.utils.helper;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,7 +14,9 @@ import com.yapps.senaempresa.repository.AccountRepository;
 import com.yapps.senaempresa.utils.enums.StatusEnum;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class PersonServiceHelper {
@@ -28,67 +31,82 @@ public class PersonServiceHelper {
     }
 
     public void validateUniqueKeys(NewUserDto personDto) {
-        StringBuilder errorMessage = new StringBuilder();
+        log.info("Validating unique keys for new user creation with Identification: {}", personDto.getUserIdentification());
+        List<String> errorMessages = new ArrayList<>();
 
         if (existingAccount(personDto.getUserIdentification())) {
-            errorMessage.append("Person with identification already exists. ");
+            errorMessages.add("Person with identification already exists. ");
         }
 
         if (accountRepository.existsByUserLogin(personDto.getUserIdentification())) {
-            errorMessage.append("Person with login already exists. ");
+            errorMessages.add("Person with login already exists. ");
         }
 
         if (accountRepository.existsByUserEmail(personDto.getUserEmail())) {
-            errorMessage.append("Person with email already exists. ");
+            errorMessages.add("Person with email already exists. ");
         }
 
-        if (errorMessage.length() > 0) {
-            throw new IllegalArgumentException(errorMessage.toString());
+        if (!errorMessages.isEmpty()) {
+            log.warn("Validation failed for new user: {} rules violated", errorMessages.size());
+            throw new IllegalArgumentException(String.join(" ", errorMessages));
         }
+        log.info("Unique keys validation passed successfully.");
     }
 
     public void validateUniqueKeys(Long userId, UserDetailsDto personDto) {
-        StringBuilder errorMessage = new StringBuilder();
+        log.info("Validating unique keys for updating user ID: {}", userId);
+        List<String> errorMessages = new ArrayList<>();
 
         if (!existingAccount(personDto.getUserIdentification())) {
-            errorMessage.append("Person with identification does not exist. ");
+            errorMessages.add("Person with identification does not exist. ");
         }
 
         if (accountRepository.existsByUserLoginAndUserIdNot(personDto.getUserIdentification(), userId)) {
-            errorMessage.append("Person with login already exists. ");
+            errorMessages.add("Person with login already exists. ");
         }
 
         if (accountRepository.existsByUserEmailAndUserIdNot(personDto.getUserEmail(), userId)) {
-            errorMessage.append("Person with email already exists. ");
+            errorMessages.add("Person with email already exists. ");
         }
 
-        if (errorMessage.length() > 0) {
-            throw new IllegalArgumentException(errorMessage.toString());
+        if (!errorMessages.isEmpty()) {
+            log.warn("Validation failed for updating user ID {}: {} rules violated", userId, errorMessages.size());
+            throw new IllegalArgumentException(String.join(" ", errorMessages));
         }
+        log.info("Unique keys validation passed successfully for user ID: {}", userId);
     }
 
     public void validateIntegrity(Long userId, UserDetailsDto personDto) {
-        StringBuilder errorMessage = new StringBuilder();
+        log.info("Validating data integrity for updating user ID: {}", userId);
+        List<String> errorMessages = new ArrayList<>();
 
         Account account = accountRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("Person not found"));
+                .orElseThrow(() -> {
+                    log.error("Integrity validation failed: User not found with ID: {}", userId);
+                    return new IllegalArgumentException("Person not found");
+                });
 
         if (!personDto.getUserIdentification().equals(account.getUserIdentification())) {
-            errorMessage.append("The identification cannot be changed.");
+            errorMessages.add("The identification cannot be changed.");
         }
 
         if (!personDto.getUserTypeIdentification().equals(account.getUserTypeIdentification())) {
-            errorMessage.append("The type of identification cannot be changed.");
+            errorMessages.add("The type of identification cannot be changed.");
         }
 
-        if (errorMessage.length() > 0) {
-            throw new IllegalArgumentException(errorMessage.toString());
+        if (!errorMessages.isEmpty()) {
+            log.warn("Data integrity validation failed for user ID {}: {} rules violated", userId, errorMessages.size());
+            throw new IllegalArgumentException(String.join(" ", errorMessages));
         }
+        log.info("Data integrity validation passed successfully for user ID: {}", userId);
     }
 
     public Account updateAccount(UserDetailsDto personDto, Account existingAccount) {
+        log.info("Updating account roles/status for user ID: {}", existingAccount.getUserId());
+        
         // 1. Extract incoming role IDs from the DTO, ensuring it's not null
         List<Long> incomingRoleIds = personDto.getUserRoles() != null ? personDto.getUserRoles() : List.of();
+        log.info("Incoming roles count: {}", incomingRoleIds.size());
 
         // Extract existing roles of the account
         List<Long> existingRoleIds = existingAccount.getUserRoles().stream()
@@ -101,6 +119,7 @@ public class PersonServiceHelper {
                 .toList();
 
         // Update the status of existing roles based on the new roles
+        log.info("Updating statuses for {} existing roles", existingRoleIds.size());
         existingAccount.getUserRoles().forEach(userRole -> {
             if (incomingRoleIds.contains(userRole.getRole().getRoleId())) {
                 userRole.setStatus(ACTIVE_STATUS);
@@ -108,6 +127,8 @@ public class PersonServiceHelper {
                 userRole.setStatus(INACTIVE_STATUS);
             }
         });
+
+        log.info("Found {} new role(s) to add to user ID: {}", newRoleIds.size(), existingAccount.getUserId());
 
         // Add new roles that are not currently associated with the account
         List<ApplicationUserRole> newRoles = newRoleIds.stream()
@@ -124,17 +145,24 @@ public class PersonServiceHelper {
 
         existingAccount.getUserRoles().addAll(newRoles);
 
+        log.info("Roles updated successfully in memory for user ID: {}", existingAccount.getUserId());
         return existingAccount;
     }
 
     public Account disableAccount(UserDetailsDto personDto, Account existingAccount) {
+        log.info("Disabling account globally for user ID: {}", existingAccount.getUserId());
+
         // Disable the account
         existingAccount.setStatus(INACTIVE_STATUS);
 
         // Update the associated roles to inactive
+        log.info("Synchronizing incoming roles before applying global inactive status");
         existingAccount = updateAccount(personDto, existingAccount);
+
+        log.info("Forcing inactive status on all {} roles", existingAccount.getUserRoles().size());
         existingAccount.getUserRoles().forEach(userRole -> userRole.setStatus(INACTIVE_STATUS));
 
+        log.info("User and {} roles have been successfully marked as inactive in memory", existingAccount.getUserRoles().size());
         return existingAccount;
     }
 
