@@ -7,16 +7,12 @@ import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Email;
-import java.util.Date;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewUserDto {
-
-    @NotBlank(message = "La contraseña es obligatoria")
-    private String userPassword;
 
     @NotBlank(message = "El No de identificación es obligatorio")
     private String userIdentification;
@@ -34,9 +30,6 @@ public class NewUserDto {
     @NotBlank(message = "El correo electrónico es obligatorio")
     @Email(message = "El formato del correo electrónico no es válido")
     private String userEmail;
-
-    @NotNull(message = "La fecha de creación es obligatoria")
-    private Date dateCreated;
 
     @NotBlank(message = "El primer nombre es obligatorio")
     private String userFirstname;

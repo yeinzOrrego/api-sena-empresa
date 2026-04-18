@@ -24,6 +24,8 @@ public interface PersonMapper {
 
     PageDto<UserListDto> toPageDto(Page<Account> entities);
 
+    @Mapping(target = "dateCreated", expression = "java(new Date())")
+    @Mapping(target = "userPassword", ignore = true)
     @Mapping(target = "userLogin", source = "userIdentification")
     Account toEntity(NewUserDto dto);
 
