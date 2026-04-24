@@ -33,5 +33,40 @@
     "name": "jwt.refresh-expiration",
     "type": "java.lang.String",
     "description": "expiration time for JWT refresh tokens (e.g., '86400000' for 24 hours)"
+  },
+  {
+    "name": "oci.namespace",
+    "type": "java.lang.String",
+    "description": "namespace for OCI Object Storage"
+  },
+  {
+    "name": "oci.bucket-name",
+    "type": "java.lang.String",
+    "description": "bucket name for OCI Object Storage"
+  },
+  {
+    "name": "oci.private-key-path",
+    "type": "java.lang.String",
+    "description": "path to the private key for OCI authentication"
+  },
+  {
+    "name": "oci.region",
+    "type": "java.lang.String",
+    "description": "region for OCI services"
+  },
+  {
+    "name": "oci.fingerprint",
+    "type": "java.lang.String",
+    "description": "fingerprint for OCI authentication"
+  },
+  {
+    "name": "oci.user-id",
+    "type": "java.lang.String",
+    "description": "user ID for OCI authentication"
+  },
+  {
+    "name": "oci.tenancy-id",
+    "type": "java.lang.String",
+    "description": "tenancy ID for OCI authentication"
   }
 ]}

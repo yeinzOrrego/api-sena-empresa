@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.5.13</version>
+        <version>3.5.14</version>
         <relativePath/> </parent>
     <groupId>com.yapps.senaempresa</groupId>
     <artifactId>sena-empresa</artifactId>
@@ -40,6 +40,16 @@
                     <artifactId>spring-cloud-starter-openfeign</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.oci.sdk</groupId>
+            <artifactId>oci-java-sdk-objectstorage</artifactId>
+            <version>3.38.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.oracle.oci.sdk</groupId>
+            <artifactId>oci-java-sdk-common-httpclient-jersey3</artifactId>
+            <version>3.38.0</version>
         </dependency>
         <dependency>    
             <groupId>dev.langchain4j</groupId>    

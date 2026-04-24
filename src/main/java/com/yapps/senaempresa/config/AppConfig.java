@@ -1,4 +1,4 @@
-package com.yapps.senaempresa.security;
+package com.yapps.senaempresa.config;
 
 import com.yapps.senaempresa.repository.AccountRepository;
 import com.yapps.senaempresa.utils.enums.StatusEnum;
