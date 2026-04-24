@@ -39,8 +39,9 @@ public class Account implements UserDetails {
     @Column(nullable = false, length = 10, unique = true)
     private String userIdentification;
 
-    @Column(nullable = false)
-    private Long userTypeIdentification;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_type_identification", nullable = false)
+    private TypeIdentification typeIdentification;
 
     @Column(length = 20)
     private String userCellular;
