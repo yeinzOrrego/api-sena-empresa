@@ -26,10 +26,12 @@ public interface PersonMapper {
 
     @Mapping(target = "dateCreated", expression = "java(java.time.LocalDateTime.now())")
     @Mapping(target = "userPassword", ignore = true)
+    @Mapping(target = "typeIdentification.typeId", source = "userTypeIdentification")
     @Mapping(target = "userLogin", source = "userIdentification")
     Account toEntity(NewUserDto dto);
 
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "typeIdentification", ignore = true)
     @Mapping(target = "userRoles", ignore = true)
     void updateEntity(@MappingTarget Account entity, UserDetailsDto dto);
 

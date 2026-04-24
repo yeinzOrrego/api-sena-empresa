@@ -40,7 +40,7 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
     @Transactional(readOnly = true)
     public PageDto<UserListDto> getAllPersons(EcosystemRequestQuery ecosystemRequestQuery) {
         log.info("Fetching all persons with page {}, size {}", ecosystemRequestQuery.getPage(), ecosystemRequestQuery.getSize());
-        Pageable pageable = this.getPageable(ecosystemRequestQuery.getPage(), ecosystemRequestQuery.getSize(),
+        Pageable pageable = getPageable(ecosystemRequestQuery.getPage(), ecosystemRequestQuery.getSize(),
                 ecosystemRequestQuery.getOrdersBy());
         SearchSpecifications<Account> especificacion = getSearchSpecifications(
                 ecosystemRequestQuery.getSearchsBy());

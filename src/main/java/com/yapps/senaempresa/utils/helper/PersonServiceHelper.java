@@ -90,7 +90,7 @@ public class PersonServiceHelper {
             errorMessages.add("The identification cannot be changed.");
         }
 
-        if (!personDto.getUserTypeIdentification().equals(account.getUserTypeIdentification())) {
+        if (!personDto.getUserTypeIdentification().equals(account.getTypeIdentification().getTypeId())) {
             errorMessages.add("The type of identification cannot be changed.");
         }
 
