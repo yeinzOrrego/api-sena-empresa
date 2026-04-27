@@ -43,4 +43,8 @@ public class Product {
     @Column(nullable = false)
     private Long userCreated;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "attachment_id", nullable = false)
+    private Attachment attachment;
+
 }

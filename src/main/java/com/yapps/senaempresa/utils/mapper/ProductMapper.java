@@ -6,6 +6,7 @@ import com.yapps.senaempresa.config.GlobalMapperConfig;
 import com.yapps.senaempresa.model.dto.NewProductDto;
 import com.yapps.senaempresa.model.dto.ProductDetailsDto;
 import com.yapps.senaempresa.model.dto.ProductListDto;
+import com.yapps.senaempresa.model.dto.UpdateProductDto;
 import com.yapps.senaempresa.model.entity.Product;
 
 import org.mapstruct.Mapper;
@@ -15,6 +16,7 @@ import org.mapstruct.MappingTarget;
 @Mapper(config = GlobalMapperConfig.class)
 public interface ProductMapper {
 
+    @Mapping(target = "fileUrl", source = "attachment.fileUrl")
     ProductListDto toDto(Product entity);
 
     PageDto<ProductListDto> toPageDto(Page<Product> entities);
@@ -28,5 +30,6 @@ public interface ProductMapper {
 
     @Mapping(target = "productId", ignore = true)
     @Mapping(target = "unitMeasure.unitId", source = "unitMeasure")
-    void updateEntity(@MappingTarget Product entity, ProductDetailsDto dto);
+    @Mapping(target = "attachment", ignore = true)
+    void updateEntity(@MappingTarget Product entity, UpdateProductDto dto);
 }

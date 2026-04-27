@@ -14,10 +14,11 @@ import java.util.Optional;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
+    @EntityGraph(attributePaths = {"attachment"})
     Page<Product> findAll(Specification<Product> specification, Pageable pageable);
 
     @Override
-    @EntityGraph(attributePaths = {"unitMeasure"})
+    @EntityGraph(attributePaths = {"unitMeasure", "attachment"})
     Optional<Product> findById(Long id);
 
     boolean existsByBarCode(String barCode);

@@ -2,6 +2,9 @@ package com.yapps.senaempresa.model.dto;
 
 import java.math.BigDecimal;
 
+import org.springframework.web.multipart.MultipartFile;
+import com.yapps.senaempresa.utils.validation.AllowedMimeTypes;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -30,5 +33,8 @@ public class NewProductDto {
 
     @NotNull(message = "El usuario creador no puede ser nulo")
     private Long userCreated;
+
+    @AllowedMimeTypes(types = {"image/jpeg"})
+    private MultipartFile image;
     
 }

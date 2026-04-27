@@ -5,15 +5,19 @@ import com.ada.ecosystem.core.v1.query.EcosystemRequestQuery;
 import com.yapps.senaempresa.model.dto.NewProductDto;
 import com.yapps.senaempresa.model.dto.ProductDetailsDto;
 import com.yapps.senaempresa.model.dto.ProductListDto;
+import com.yapps.senaempresa.model.dto.UpdateProductDto;
 import com.yapps.senaempresa.service.ProductService;
 import com.yapps.senaempresa.utils.response.ProcessResult;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
 
 @RestController
 @RequestMapping("/api/v1/products")
@@ -23,7 +27,8 @@ public class ProductController {
     private final ProductService productService;
 
     @GetMapping
-    public ResponseEntity<PageDto<ProductListDto>> getAllProducts(@RequestBody EcosystemRequestQuery ecosystemRequestQuery) {
+    public ResponseEntity<PageDto<ProductListDto>> getAllProducts(
+            @RequestBody EcosystemRequestQuery ecosystemRequestQuery) {
         return new ResponseEntity<>(productService.getAllProducts(ecosystemRequestQuery), HttpStatus.OK);
     }
 
@@ -32,13 +37,15 @@ public class ProductController {
         return new ResponseEntity<>(productService.getProductById(id), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<ProcessResult<Long>> createProduct(@Valid @RequestBody NewProductDto productDto) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProcessResult<Long>> createProduct(@Valid @ModelAttribute NewProductDto productDto)
+            throws IOException {
         return new ResponseEntity<>(productService.createProduct(productDto), HttpStatus.CREATED);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<ProcessResult<Long>> updateProduct(@PathVariable Long id, @RequestBody ProductDetailsDto productDto) {
+    @PutMapping(value = "/update/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ProcessResult<Long>> updateProduct(@PathVariable Long id,
+            @ModelAttribute UpdateProductDto productDto) throws IOException {
         return new ResponseEntity<>(productService.updateProduct(id, productDto), HttpStatus.OK);
     }
 

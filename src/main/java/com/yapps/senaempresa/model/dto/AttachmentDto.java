@@ -1,7 +1,5 @@
 package com.yapps.senaempresa.model.dto;
 
-import java.math.BigDecimal;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,12 +8,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class ProductListDto {
-    private Long productId;
-    private String name;
-    private BigDecimal price;
+@NoArgsConstructor
+public class AttachmentDto {
+    private Long attachmentId;
     private String fileUrl;
-    private String barCode;
 }
