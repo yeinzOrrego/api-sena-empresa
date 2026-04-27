@@ -44,29 +44,10 @@
     "type": "java.lang.String",
     "description": "bucket name for OCI Object Storage"
   },
+
   {
-    "name": "oci.private-key-path",
+    "name": "oci.config-file",
     "type": "java.lang.String",
-    "description": "path to the private key for OCI authentication"
-  },
-  {
-    "name": "oci.region",
-    "type": "java.lang.String",
-    "description": "region for OCI services"
-  },
-  {
-    "name": "oci.fingerprint",
-    "type": "java.lang.String",
-    "description": "fingerprint for OCI authentication"
-  },
-  {
-    "name": "oci.user-id",
-    "type": "java.lang.String",
-    "description": "user ID for OCI authentication"
-  },
-  {
-    "name": "oci.tenancy-id",
-    "type": "java.lang.String",
-    "description": "tenancy ID for OCI authentication"
+    "description": "path to OCI config file for authentication (e.g., '/path/to/config')"
   }
 ]}

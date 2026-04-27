@@ -9,11 +9,7 @@ import lombok.Data;
 @Component
 @Data
 public class OciProperties {
-    private String tenancyId;
-    private String userId;
-    private String fingerprint;
-    private String region;
-    private String privateKeyPath;
     private String bucketName;
     private String namespace;
+    private String configFile;
 }
