@@ -44,7 +44,7 @@ public class Product {
     private Long userCreated;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "attachment_id", nullable = false)
+    @JoinColumn(name = "attachment_id")
     private Attachment attachment;
 
 }
