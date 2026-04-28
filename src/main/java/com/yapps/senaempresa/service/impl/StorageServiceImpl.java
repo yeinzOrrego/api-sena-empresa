@@ -8,9 +8,11 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.oracle.bmc.model.BmcException;
 import com.oracle.bmc.objectstorage.ObjectStorageClient;
 import com.oracle.bmc.objectstorage.requests.DeleteObjectRequest;
 import com.oracle.bmc.objectstorage.requests.GetObjectRequest;
+import com.oracle.bmc.objectstorage.requests.HeadObjectRequest;
 import com.oracle.bmc.objectstorage.requests.PutObjectRequest;
 import com.yapps.senaempresa.config.OciProperties;
 import com.yapps.senaempresa.service.StorageService;
@@ -44,6 +46,11 @@ public class StorageServiceImpl implements StorageService {
     }
 
     public void deleteFile(String objectName) throws IOException {
+        if (!existsFile(objectName)) {
+            return; // El archivo no existe, no hay nada que eliminar
+        }
+
+
         DeleteObjectRequest request = DeleteObjectRequest.builder()
                 .namespaceName(props.getNamespace())
                 .bucketName(props.getBucketName())
@@ -61,6 +68,25 @@ public class StorageServiceImpl implements StorageService {
                 .build();
 
         return storageClient.getObject(request).getInputStream();
+    }
+
+    public boolean existsFile(String objectName) {
+        try {
+            HeadObjectRequest request = HeadObjectRequest.builder()
+                    .namespaceName(props.getNamespace())
+                    .bucketName(props.getBucketName())
+                    .objectName(objectName)
+                    .build();
+
+            storageClient.headObject(request);
+            return true; // Si no lanza excepción, el archivo existe
+        } catch (BmcException e) {
+            if (e.getStatusCode() == 404) {
+                return false; // El archivo no fue encontrado
+            }
+
+            throw e; 
+        }
     }
 
     private String buildPublicUrl(String objectName) {
