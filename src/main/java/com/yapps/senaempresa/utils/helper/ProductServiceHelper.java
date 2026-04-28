@@ -102,7 +102,9 @@ public class ProductServiceHelper {
             errorMessages.add("The bar code cannot be changed.");
         }
 
-        if (!productDto.getCurrentAttachmentId().equals(product.getAttachment().getAttachmentId())) {
+        Long existingAttachmentId = product.getAttachment() != null ? product.getAttachment().getAttachmentId() : null;
+        if ((productDto.getCurrentAttachmentId() != null && !productDto.getCurrentAttachmentId().equals(existingAttachmentId)) ||
+            (productDto.getCurrentAttachmentId() == null && existingAttachmentId != null)) {
             log.warn("Data integrity validation failed for product ID {}: The send attachment is different.", productId);
             errorMessages.add("The send attachment is different from the current one.");
         }
@@ -146,6 +148,7 @@ public class ProductServiceHelper {
 
         try {
             storageService.deleteFile(attachment.getFileName());
+            attachmentRepository.delete(attachment);
             log.info("Attachment with ID {} deleted successfully", attachmentId);
         } catch (IOException e) {
             log.error("Failed to delete attachment with ID {}: {}", attachmentId, e.getMessage());

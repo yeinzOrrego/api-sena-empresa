@@ -91,7 +91,9 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
         if (productDto.getNewAttachment() != null && !productDto.getNewAttachment().isEmpty()) {
-            productServiceHelper.deleteAttachment(productDto.getCurrentAttachmentId());
+            if (productDto.getCurrentAttachmentId() != null) {
+                productServiceHelper.deleteAttachment(productDto.getCurrentAttachmentId());
+            }
             existingProduct.setAttachment(productServiceHelper.saveAttachment(productDto.getNewAttachment()));
         }
 
