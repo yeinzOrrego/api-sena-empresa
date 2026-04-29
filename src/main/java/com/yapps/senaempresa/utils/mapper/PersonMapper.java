@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 @Mapper(config = GlobalMapperConfig.class)
 public interface PersonMapper {
 
-    @Mapping(target = "userCreated", ignore = true)
     @Mapping(target = "userRoles", expression = "java(entity.getUserRoles().stream().filter(userRole -> \"A\".equals(userRole.getStatus())).map(userRole -> userRole.getRole().getRoleId()).toList())")
     UserDetailsDto toDetailsDto(Account entity);
 

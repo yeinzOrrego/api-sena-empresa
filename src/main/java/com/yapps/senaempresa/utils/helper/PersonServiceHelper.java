@@ -138,7 +138,6 @@ public class PersonServiceHelper {
                         .roleId(roleId)
                         .build())
                         .dateCreated(LocalDateTime.now())
-                        .userCreated(personDto.getUserCreated())
                         .status(ACTIVE_STATUS)
                         .build())
                 .toList();
