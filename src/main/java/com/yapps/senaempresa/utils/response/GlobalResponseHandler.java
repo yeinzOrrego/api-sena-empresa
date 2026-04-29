@@ -1,7 +1,5 @@
-package com.yapps.senaempresa.config;
+package com.yapps.senaempresa.utils.response;
 
-import com.yapps.senaempresa.utils.response.ErrorResponse;
-import com.yapps.senaempresa.utils.response.GenericResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;

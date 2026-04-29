@@ -31,9 +31,6 @@ public class NewProductDto {
     @NotBlank(message = "El código de barras o de referencia es obligatorio")
     private String barCode;
 
-    @NotNull(message = "El usuario creador no puede ser nulo")
-    private Long userCreated;
-
     @AllowedMimeTypes(types = {"image/jpeg"})
     private MultipartFile image;
     

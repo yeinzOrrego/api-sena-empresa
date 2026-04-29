@@ -1,7 +1,6 @@
-package com.yapps.senaempresa.config;
+package com.yapps.senaempresa.utils.response;
 
 import com.yapps.senaempresa.service.AssitantService;
-import com.yapps.senaempresa.utils.response.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 

@@ -24,9 +24,6 @@ public class NewUserDto {
 
     private String userCellular;
 
-    @NotNull(message = "El usuario creador no puede ser nulo")
-    private Long userCreated;
-
     @NotBlank(message = "El correo electrónico es obligatorio")
     @Email(message = "El formato del correo electrónico no es válido")
     private String userEmail;

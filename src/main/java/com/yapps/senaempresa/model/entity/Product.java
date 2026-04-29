@@ -9,12 +9,16 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+import org.springframework.data.annotation.CreatedBy;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
 @Entity
-@Table(name = "product")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "product")
+@EntityListeners(AuditingEntityListener.class) 
 public class Product {
 
     @Id
@@ -40,7 +44,8 @@ public class Product {
     @Column(nullable = false)
     private LocalDateTime dateCreated;
 
-    @Column(nullable = false)
+    @CreatedBy
+    @Column(nullable = false, updatable = false)
     private Long userCreated;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

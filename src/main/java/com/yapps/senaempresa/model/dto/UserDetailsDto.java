@@ -2,8 +2,6 @@ package com.yapps.senaempresa.model.dto;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonInclude(JsonInclude.Include.NON_NULL)
 public class UserDetailsDto {
     private Long userId;
     private String userIdentification;
@@ -24,6 +21,5 @@ public class UserDetailsDto {
     private String userCellular;
     private String userAddress;
     private String status;
-    private Long userCreated;
     private List<Long> userRoles;
 }

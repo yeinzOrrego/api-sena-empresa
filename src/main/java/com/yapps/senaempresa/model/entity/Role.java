@@ -2,10 +2,9 @@ package com.yapps.senaempresa.model.entity;
 
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import org.springframework.data.annotation.CreatedBy;
+
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,18 +19,19 @@ import lombok.NoArgsConstructor;
 public class Role {
 
     @Id
-    @Column(name = "ROLE_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long roleId;
 
-    @Column(name = "ROLE_NAME")
+    @Column(nullable = false, length = 100, unique = true)
     private String roleName;
     
-    @Column(name = "STATUS")
+    @Column(nullable = false, length = 1)
     private String status;
     
-    @Column(name = "DATE_CREATED")
+    @Column(nullable = false)
     private LocalDateTime dateCreated;
     
-    @Column(name = "USER_CREATED")
+    @CreatedBy
+    @Column(nullable = false, updatable = false)
     private Long userCreated;
 }
