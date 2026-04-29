@@ -10,10 +10,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Base64;
 import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -21,48 +25,64 @@ public class RefreshTokenHelper {
 
     @Value("${jwt.refresh-expiration}")
     private long refreshTokenDurationMs;
-    private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
-    private static final String INACTIVE_STATUS = StatusEnum.INACTIVO.getValue();
 
     private final RefreshTokenRepository refreshTokenRepository;
+    
+    private static final SecureRandom secureRandom = new SecureRandom();
+    private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
 
-    public RefreshToken generateRefreshToken(Account account) {
+    public String generateRefreshToken(Account account) {
 
         // Invalidate existing tokens for the user
         invalidateExistingTokens(account);
 
+        String tokenValue = generateSecureToken();
+
         RefreshToken refreshToken = RefreshToken.builder()
                 .user(account)
-                .refreshToken(UUID.randomUUID().toString())
+                .refreshToken(hash(tokenValue))
                 .expiresAt(Instant.now().plusMillis(refreshTokenDurationMs))
                 .createdAt(LocalDateTime.now())
                 .status(ACTIVE_STATUS)
                 .build();
                 
-        return refreshTokenRepository.save(refreshToken);
+        refreshTokenRepository.save(refreshToken);
+
+        return tokenValue;
     }
 
     public boolean verifyExpiration(RefreshToken token) {
         if (token.getExpiresAt().isBefore(Instant.now())) {
-            token.setStatus(INACTIVE_STATUS);
-            refreshTokenRepository.save(token);
+            refreshTokenRepository.delete(token);
             throw new RuntimeException("Refresh token is expired. Please sign in again.");
         }
         return true;
     }
 
     public RefreshToken findByToken(String token) {
-        return refreshTokenRepository.findByRefreshTokenAndStatus(token, ACTIVE_STATUS)
+        return refreshTokenRepository.findByRefreshTokenAndStatus(hash(token), ACTIVE_STATUS)
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
     }
 
     private void invalidateExistingTokens(Account user) {
         List<RefreshToken> existingTokens = refreshTokenRepository.findAllByUserAndStatus(user, ACTIVE_STATUS);
+        refreshTokenRepository.deleteAll(existingTokens);
+    }
 
-        // Mark existing tokens as inactive
-        existingTokens.forEach(token -> token.setStatus(INACTIVE_STATUS));
+    private String generateSecureToken() {
+        byte[] tokenBytes = new byte[64];
+        secureRandom.nextBytes(tokenBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(tokenBytes);
+    }
 
-        refreshTokenRepository.saveAll(existingTokens);
+    private String hash(String token) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashedBytes = digest.digest(token.getBytes(StandardCharsets.UTF_8));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(hashedBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing token", e);
+        }
     }
 
 }

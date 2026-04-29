@@ -5,5 +5,5 @@ import com.yapps.senaempresa.model.dto.AuthResponseDto;
 
 public interface AuthService {
     AuthResponseDto authenticate(AuthRequestDto request);
-    AuthResponseDto refreshToken(String refreshToken, String accessToken);
+    AuthResponseDto refreshToken(String refreshToken);
 }

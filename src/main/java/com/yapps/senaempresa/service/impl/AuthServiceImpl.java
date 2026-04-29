@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
         log.info("Authentication successful for user: {}", account.getUserId());
 
         String jwtToken = jwtService.generateToken(extraClaims(account), account);
-        String refreshToken = refreshTokenHelper.generateRefreshToken(account).getRefreshToken();
+        String refreshToken = refreshTokenHelper.generateRefreshToken(account);
 
         log.info("Tokens generated successfully for user: {}", account.getUserId());
 
@@ -58,12 +58,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override 
     @Transactional
-    public AuthResponseDto refreshToken(String refreshToken, String accessToken) {
+    public AuthResponseDto refreshToken(String refreshToken) {
         log.info("Starting token refresh process");
-
-        if (accessToken != null && accessToken.startsWith("Bearer ")) {
-            accessToken = accessToken.substring(7);
-        }
 
         RefreshToken token = refreshTokenHelper.findByToken(refreshToken);
 
@@ -72,17 +68,16 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("Invalid refresh token");
         }
 
-        String username = jwtService.extractUsername(accessToken);
-        log.info("Refreshing token for identified user: {}", username);
+        log.info("Refreshing token for identified user: {}", token.getUser().getUserId());
 
-        Account account = accountRepository.findByUserLogin(username)
+        Account account = accountRepository.findById(token.getUser().getUserId())
                 .orElseThrow(() -> {
-                    log.error("Failed token refresh: User {} not found", username);
+                    log.error("Failed token refresh: User {} not found", token.getUser().getUserId());
                     return new IllegalArgumentException("User not found");
                 });
 
         String newJwtToken = jwtService.generateToken(extraClaims(account), account);
-        String newRefreshToken = refreshTokenHelper.generateRefreshToken(account).getRefreshToken();
+        String newRefreshToken = refreshTokenHelper.generateRefreshToken(account);
 
         log.info("New tokens generated successfully for user: {}", account.getUserId());
 

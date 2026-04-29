@@ -28,9 +28,8 @@ public class AuthController {
 
     @GetMapping("/refresh")
     public ResponseEntity<AuthResponseDto> refreshToken(
-            @RequestHeader(required = true) String refreshToken,
-            @RequestHeader(required = true) String authorization) {
+            @RequestHeader(required = true) String refreshToken) {
 
-        return new ResponseEntity<>(authService.refreshToken(refreshToken, authorization), HttpStatus.OK);
+        return new ResponseEntity<>(authService.refreshToken(refreshToken), HttpStatus.OK);
     }
 }
