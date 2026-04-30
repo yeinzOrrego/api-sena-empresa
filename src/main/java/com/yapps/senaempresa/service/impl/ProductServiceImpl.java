@@ -40,27 +40,32 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
     @Override
     @Transactional(readOnly = true)
     public PageDto<ProductListDto> getAllProducts(EcosystemRequestQuery ecosystemRequestQuery) {
+        log.info("Fetching all products with pagination and filters");
         Pageable pageable = getPageable(ecosystemRequestQuery.getPage(), ecosystemRequestQuery.getSize(),
                 ecosystemRequestQuery.getOrdersBy());
         SearchSpecifications<Product> especificacion = getSearchSpecifications(
                 ecosystemRequestQuery.getSearchsBy());
-        return productMapper.toPageDto(productRepository.findAll(especificacion, pageable));
+        PageDto<ProductListDto> pageResult = productMapper.toPageDto(productRepository.findAll(especificacion, pageable));
+        log.info("Successfully fetched {} products (total pages: {})", pageResult.getContent().size(), pageResult.getTotalPages());
+        return pageResult;
     }
 
     @Override
     @Transactional(readOnly = true)
     public ProductDetailsDto getProductById(Long id) {
+        log.info("Fetching product details for ID: {}", id);
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found with ID: " + id));
+                .orElseThrow(() -> {
+                    log.warn("Product not found with ID: {}", id);
+                    return new IllegalArgumentException("Product not found with ID: " + id);
+                });
         return productMapper.toDetailsDto(product);
     }
 
     @Override
     @Transactional
     public ProcessResult<Long> createProduct(NewProductDto productDto) throws IOException {
-        if (productRepository.existsByBarCode(productDto.getBarCode())) {
-            throw new IllegalArgumentException("Product with bar code already exists");
-        }
+        log.info("Attempting to create a new product");
 
         productServiceHelper.validateUniqueKeys(productDto);
 
@@ -68,10 +73,12 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
         entity.setStatus(ACTIVE_STATUS);
         
         if (productDto.getImage() != null && !productDto.getImage().isEmpty()) {
+            log.info("Processing image attachment for new product");
             entity.setAttachment(productServiceHelper.saveAttachment(productDto.getImage()));
         }
 
         entity = productRepository.save(entity);
+        log.info("Product created successfully with ID: {}", entity.getProductId());
 
         return ProcessResult.<Long>builder()
                 .result(entity.getProductId())
@@ -83,14 +90,19 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
     @Override
     @Transactional
     public ProcessResult<Long> updateProduct(Long id, UpdateProductDto productDto) throws IOException {
+        log.info("Attempting to update product with ID: {}", id);
 
         productServiceHelper.validateUniqueKeys(id, productDto);
         productServiceHelper.validateIntegrity(id, productDto);
 
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Product not found"));
+                .orElseThrow(() -> {
+                    log.error("Failed to update: Product not found with ID: {}", id);
+                    return new IllegalArgumentException("Product not found");
+                });
 
         if (productDto.getNewAttachment() != null && !productDto.getNewAttachment().isEmpty()) {
+            log.info("Updating image attachment for product ID: {}", id);
             if (productDto.getCurrentAttachmentId() != null) {
                 productServiceHelper.deleteAttachment(productDto.getCurrentAttachmentId());
             }
@@ -100,6 +112,7 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
         productMapper.updateEntity(existingProduct, productDto);
 
         existingProduct = productRepository.save(existingProduct);
+        log.info("Product updated successfully with ID: {}", existingProduct.getProductId());
 
         return ProcessResult.<Long>builder()
                 .result(existingProduct.getProductId())
