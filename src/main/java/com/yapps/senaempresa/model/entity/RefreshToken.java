@@ -34,6 +34,6 @@ public class RefreshToken {
     private String status;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", referencedColumnName = "userId")
+    @JoinColumn(name = "user_id")
     private Account user;
 }
