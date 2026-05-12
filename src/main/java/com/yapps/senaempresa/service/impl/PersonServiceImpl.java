@@ -60,7 +60,7 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
 
     @Override
     @Transactional
-    public ProcessResult<String> createPerson(NewUserDto personDto) {
+    public ProcessResult<Long> createPerson(NewUserDto personDto) {
         log.info("Starting person creation process for Identification: {}", personDto.getUserIdentification());
         personServiceHelper.validateUniqueKeys(personDto);
 
@@ -72,8 +72,8 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
         log.info("Saving new person to database");
 
         log.info("Person created successfully with ID: {}", entity.getUserId());
-        return ProcessResult.<String>builder()
-                .result(entity.getUserId().toString())
+        return ProcessResult.<Long>builder()
+                .result(entity.getUserId())
                 .message("User created successfully")
                 .resultCode((long) HttpStatus.CREATED.value())
                 .build();
@@ -81,7 +81,7 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
 
     @Override
     @Transactional
-    public ProcessResult<String> updatePerson(Long userId, UserDetailsDto personDto) {
+    public ProcessResult<Long> updatePerson(Long userId, UserDetailsDto personDto) {
         log.info("Starting person update process for user ID: {}", userId);
 
         personServiceHelper.validateUniqueKeys(userId, personDto);
@@ -103,8 +103,8 @@ public class PersonServiceImpl extends EcosystemService implements PersonService
         updateAccount = accountRepository.save(updateAccount);
 
         log.info("Person updated successfully with user ID: {}", updateAccount.getUserId());
-        return ProcessResult.<String>builder()
-                .result(updateAccount.getUserId().toString())
+        return ProcessResult.<Long>builder()
+                .result(updateAccount.getUserId())
                 .message("User updated successfully")
                 .resultCode((long) HttpStatus.OK.value())
                 .build();

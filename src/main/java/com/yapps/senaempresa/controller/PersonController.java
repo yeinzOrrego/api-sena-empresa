@@ -34,12 +34,12 @@ public class PersonController {
     }
 
     @PostMapping
-    public ResponseEntity<ProcessResult<String>> createPerson(@Valid @RequestBody NewUserDto personDto) {
+    public ResponseEntity<ProcessResult<Long>> createPerson(@Valid @RequestBody NewUserDto personDto) {
         return new ResponseEntity<>(personService.createPerson(personDto), HttpStatus.CREATED);
     }
 
     @PutMapping("/update/{userId}")
-    public ResponseEntity<ProcessResult<String>> updatePerson(@PathVariable Long userId,
+    public ResponseEntity<ProcessResult<Long>> updatePerson(@PathVariable Long userId,
             @RequestBody UserDetailsDto personDto) {
         return new ResponseEntity<>(personService.updatePerson(userId, personDto), HttpStatus.OK);
     }

@@ -10,6 +10,6 @@ import com.yapps.senaempresa.utils.response.ProcessResult;
 public interface PersonService {
     PageDto<UserListDto> getAllPersons(EcosystemRequestQuery ecosystemRequestQuery);
     UserDetailsDto getPersonById(Long userId);
-    ProcessResult<String> createPerson(NewUserDto personDto);
-    ProcessResult<String> updatePerson(Long userId, UserDetailsDto personDto);
+    ProcessResult<Long> createPerson(NewUserDto personDto);
+    ProcessResult<Long> updatePerson(Long userId, UserDetailsDto personDto);
 }
