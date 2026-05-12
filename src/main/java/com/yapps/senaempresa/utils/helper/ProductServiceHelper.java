@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yapps.senaempresa.model.entity.Product;
 import com.yapps.senaempresa.model.entity.Attachment;
+import com.yapps.senaempresa.model.entity.Inventory;
 import com.yapps.senaempresa.model.dto.NewProductDto;
 import com.yapps.senaempresa.model.dto.UpdateProductDto;
 import com.yapps.senaempresa.repository.AttachmentRepository;
@@ -158,6 +159,13 @@ public class ProductServiceHelper {
 
     private boolean validateUnitMeasure(Long unitMeasureId) {
         return unitMeasureId != null && unitMeasureRepository.existsById(unitMeasureId);
+    }
+
+    public Inventory newInventory(Product product) {
+        return Inventory.builder()
+                .product(product)
+                .stock(0)
+                .build();
     }
 
 }

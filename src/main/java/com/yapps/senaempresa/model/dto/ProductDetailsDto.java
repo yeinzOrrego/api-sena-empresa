@@ -19,5 +19,6 @@ public class ProductDetailsDto {
     private String barCode;
     private Long unitMeasure;
     private AttachmentDto attachment;
+    private InventoryDto inventory;
     private String status;
 }

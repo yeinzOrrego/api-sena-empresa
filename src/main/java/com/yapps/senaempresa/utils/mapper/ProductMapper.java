@@ -22,6 +22,7 @@ public interface ProductMapper {
     PageDto<ProductListDto> toPageDto(Page<Product> entities);
 
     @Mapping(target = "unitMeasure", source = "unitMeasure.unitId")
+    @Mapping(target = "inventory.productId", source = "inventory.product.productId")
     ProductDetailsDto toDetailsDto(Product entity);
 
     @Mapping(target = "dateCreated", expression = "java(java.time.LocalDateTime.now())")
@@ -31,5 +32,6 @@ public interface ProductMapper {
     @Mapping(target = "productId", ignore = true)
     @Mapping(target = "unitMeasure.unitId", source = "unitMeasure")
     @Mapping(target = "attachment", ignore = true)
+    @Mapping(target = "inventory", ignore = true)
     void updateEntity(@MappingTarget Product entity, UpdateProductDto dto);
 }

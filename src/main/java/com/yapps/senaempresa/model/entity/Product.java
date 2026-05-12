@@ -48,8 +48,11 @@ public class Product {
     @Column(nullable = false, updatable = false)
     private Long userCreated;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "attachment_id")
     private Attachment attachment;
+
+    @OneToOne(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Inventory inventory;
 
 }

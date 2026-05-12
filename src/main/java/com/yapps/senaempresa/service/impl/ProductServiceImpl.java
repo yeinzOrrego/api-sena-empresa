@@ -32,7 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProductServiceImpl extends EcosystemService implements ProductService {
 
     private final ProductRepository productRepository;
-    private final ProductServiceHelper productServiceHelper;
+    private final ProductServiceHelper helper;
     private final ProductMapper productMapper;
 
     private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
@@ -67,14 +67,16 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
     public ProcessResult<Long> createProduct(NewProductDto productDto) throws IOException {
         log.info("Attempting to create a new product");
 
-        productServiceHelper.validateUniqueKeys(productDto);
+        helper.validateUniqueKeys(productDto);
 
         Product entity = productMapper.toEntity(productDto);
         entity.setStatus(ACTIVE_STATUS);
         
+        entity.setInventory(helper.newInventory(entity));
+
         if (productDto.getImage() != null && !productDto.getImage().isEmpty()) {
             log.info("Processing image attachment for new product");
-            entity.setAttachment(productServiceHelper.saveAttachment(productDto.getImage()));
+            entity.setAttachment(helper.saveAttachment(productDto.getImage()));
         }
 
         entity = productRepository.save(entity);
@@ -92,8 +94,8 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
     public ProcessResult<Long> updateProduct(Long id, UpdateProductDto productDto) throws IOException {
         log.info("Attempting to update product with ID: {}", id);
 
-        productServiceHelper.validateUniqueKeys(id, productDto);
-        productServiceHelper.validateIntegrity(id, productDto);
+        helper.validateUniqueKeys(id, productDto);
+        helper.validateIntegrity(id, productDto);
 
         Product existingProduct = productRepository.findById(id)
                 .orElseThrow(() -> {
@@ -104,9 +106,9 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
         if (productDto.getNewAttachment() != null && !productDto.getNewAttachment().isEmpty()) {
             log.info("Updating image attachment for product ID: {}", id);
             if (productDto.getCurrentAttachmentId() != null) {
-                productServiceHelper.deleteAttachment(productDto.getCurrentAttachmentId());
+                helper.deleteAttachment(productDto.getCurrentAttachmentId());
             }
-            existingProduct.setAttachment(productServiceHelper.saveAttachment(productDto.getNewAttachment()));
+            existingProduct.setAttachment(helper.saveAttachment(productDto.getNewAttachment()));
         }
 
         productMapper.updateEntity(existingProduct, productDto);
