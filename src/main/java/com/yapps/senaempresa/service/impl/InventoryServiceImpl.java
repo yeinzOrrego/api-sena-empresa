@@ -94,7 +94,7 @@ public class InventoryServiceImpl extends EcosystemService implements InventoryS
 
         product = productRepository.save(product);
 
-        helper.recordHistory(product, transferStockDto.getQuantity(), transferStockDto.getReceivedBy(), transferStockDto.getDeliveredBy());
+        helper.recordMovement(product, transferStockDto.getQuantity(), transferStockDto.getReceivedBy(), transferStockDto.getDeliveredBy());
 
         return ProcessResult.<String>builder()
                 .result("")

@@ -1,6 +1,6 @@
 package com.yapps.senaempresa.repository;
 
-import com.yapps.senaempresa.model.entity.Account;
+import com.yapps.senaempresa.model.entity.User;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,17 +12,17 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
     
-    Optional<Account> findByUserLogin(String username);
+    Optional<User> findByUserLogin(String username);
 
     @EntityGraph(attributePaths = {"userRoles", "userRoles.role"})
-    Optional<Account> findWithRolesByUserLoginAndStatus(String username, String status);
+    Optional<User> findWithRolesByUserLoginAndStatus(String username, String status);
 
     @EntityGraph(attributePaths = {"userRoles", "userRoles.role"})
-    Optional<Account> findWithRolesByUserId(Long userId);
+    Optional<User> findWithRolesByUserId(Long userId);
 
-    Page<Account> findAll(Specification<Account> specification, Pageable pageable);
+    Page<User> findAll(Specification<User> specification, Pageable pageable);
 
     boolean existsByUserIdentification(String userIdentification);
 

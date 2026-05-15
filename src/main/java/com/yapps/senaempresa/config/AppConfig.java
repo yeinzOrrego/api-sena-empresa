@@ -1,6 +1,6 @@
 package com.yapps.senaempresa.config;
 
-import com.yapps.senaempresa.repository.AccountRepository;
+import com.yapps.senaempresa.repository.UserRepository;
 import com.yapps.senaempresa.utils.enums.StatusEnum;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -18,13 +18,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @RequiredArgsConstructor
 public class AppConfig {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository UserRepository;
 
     private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> accountRepository.findWithRolesByUserLoginAndStatus(username, ACTIVE_STATUS)
+        return username -> UserRepository.findWithRolesByUserLoginAndStatus(username, ACTIVE_STATUS)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
     }
 

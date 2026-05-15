@@ -2,9 +2,9 @@ package com.yapps.senaempresa.service.impl;
 
 import com.yapps.senaempresa.model.dto.AuthRequestDto;
 import com.yapps.senaempresa.model.dto.AuthResponseDto;
-import com.yapps.senaempresa.model.entity.Account;
+import com.yapps.senaempresa.model.entity.User;
 import com.yapps.senaempresa.model.entity.RefreshToken;
-import com.yapps.senaempresa.repository.AccountRepository;
+import com.yapps.senaempresa.repository.UserRepository;
 import com.yapps.senaempresa.security.JwtService;
 import com.yapps.senaempresa.service.AuthService;
 import com.yapps.senaempresa.utils.helper.RefreshTokenHelper;
@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository UserRepository;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenHelper refreshTokenHelper;
@@ -42,13 +42,13 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        Account account = (Account) authentication.getPrincipal();
-        log.info("Authentication successful for user: {}", account.getUserId());
+        User User = (User) authentication.getPrincipal();
+        log.info("Authentication successful for user: {}", User.getUserId());
 
-        String jwtToken = jwtService.generateToken(extraClaims(account), account);
-        String refreshToken = refreshTokenHelper.generateRefreshToken(account);
+        String jwtToken = jwtService.generateToken(extraClaims(User), User);
+        String refreshToken = refreshTokenHelper.generateRefreshToken(User);
 
-        log.info("Tokens generated successfully for user: {}", account.getUserId());
+        log.info("Tokens generated successfully for user: {}", User.getUserId());
 
         return AuthResponseDto.builder()
                 .accessToken(jwtToken)
@@ -70,16 +70,16 @@ public class AuthServiceImpl implements AuthService {
 
         log.info("Refreshing token for identified user: {}", token.getUser().getUserId());
 
-        Account account = accountRepository.findById(token.getUser().getUserId())
+        User User = UserRepository.findById(token.getUser().getUserId())
                 .orElseThrow(() -> {
                     log.error("Failed token refresh: User {} not found", token.getUser().getUserId());
                     return new IllegalArgumentException("User not found");
                 });
 
-        String newJwtToken = jwtService.generateToken(extraClaims(account), account);
-        String newRefreshToken = refreshTokenHelper.generateRefreshToken(account);
+        String newJwtToken = jwtService.generateToken(extraClaims(User), User);
+        String newRefreshToken = refreshTokenHelper.generateRefreshToken(User);
 
-        log.info("New tokens generated successfully for user: {}", account.getUserId());
+        log.info("New tokens generated successfully for user: {}", User.getUserId());
 
         return AuthResponseDto.builder()
                 .accessToken(newJwtToken)
@@ -87,10 +87,10 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
     
-    private Map<String, Object> extraClaims(Account account) {
+    private Map<String, Object> extraClaims(User User) {
         return Map.of(
-                "userId", account.getUserId(),
-                "name", account.getUserFirstname() + " " + account.getUserLastname()
+                "userId", User.getUserId(),
+                "name", User.getUserFirstname() + " " + User.getUserLastname()
         );
     }
 }

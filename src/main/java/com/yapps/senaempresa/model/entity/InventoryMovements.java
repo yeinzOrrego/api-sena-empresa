@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "inventory_movements")
 @EntityListeners(AuditingEntityListener.class)
-public class InventoryHistory {
+public class InventoryMovements {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,11 +29,11 @@ public class InventoryHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivered_by", nullable = false)
-    private Account deliveredBy;
+    private User deliveredBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "received_by", nullable = false)
-    private Account receivedBy;
+    private User receivedBy;
 
     @Column(nullable = false)
     private Integer quantity;

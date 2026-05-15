@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
-import com.yapps.senaempresa.model.entity.Account;
+import com.yapps.senaempresa.model.entity.User;
 import com.yapps.senaempresa.model.entity.ApplicationUserRole;
 import com.yapps.senaempresa.model.entity.Role;
 import com.yapps.senaempresa.model.dto.NewUserDto;
 import com.yapps.senaempresa.model.dto.UserDetailsDto;
-import com.yapps.senaempresa.repository.AccountRepository;
+import com.yapps.senaempresa.repository.UserRepository;
 import com.yapps.senaempresa.utils.enums.StatusEnum;
 
 import lombok.RequiredArgsConstructor;
@@ -21,28 +21,28 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PersonServiceHelper {
 
-    private final AccountRepository accountRepository;
+    private final UserRepository UserRepository;
 
     private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
     private static final String INACTIVE_STATUS = StatusEnum.INACTIVO.getValue();
 
-    public boolean existingAccount(String userIdentification) {
-        return accountRepository.existsByUserIdentification(userIdentification);
+    public boolean existingUser(String userIdentification) {
+        return UserRepository.existsByUserIdentification(userIdentification);
     }
 
     public void validateUniqueKeys(NewUserDto personDto) {
         log.info("Validating unique keys for new user creation with Identification: {}", personDto.getUserIdentification());
         List<String> errorMessages = new ArrayList<>();
 
-        if (existingAccount(personDto.getUserIdentification())) {
+        if (existingUser(personDto.getUserIdentification())) {
             errorMessages.add("Person with identification already exists. ");
         }
 
-        if (accountRepository.existsByUserLogin(personDto.getUserIdentification())) {
+        if (UserRepository.existsByUserLogin(personDto.getUserIdentification())) {
             errorMessages.add("Person with login already exists. ");
         }
 
-        if (accountRepository.existsByUserEmail(personDto.getUserEmail())) {
+        if (UserRepository.existsByUserEmail(personDto.getUserEmail())) {
             errorMessages.add("Person with email already exists. ");
         }
 
@@ -57,15 +57,15 @@ public class PersonServiceHelper {
         log.info("Validating unique keys for updating user ID: {}", userId);
         List<String> errorMessages = new ArrayList<>();
 
-        if (!existingAccount(personDto.getUserIdentification())) {
+        if (!existingUser(personDto.getUserIdentification())) {
             errorMessages.add("Person with identification does not exist. ");
         }
 
-        if (accountRepository.existsByUserLoginAndUserIdNot(personDto.getUserIdentification(), userId)) {
+        if (UserRepository.existsByUserLoginAndUserIdNot(personDto.getUserIdentification(), userId)) {
             errorMessages.add("Person with login already exists. ");
         }
 
-        if (accountRepository.existsByUserEmailAndUserIdNot(personDto.getUserEmail(), userId)) {
+        if (UserRepository.existsByUserEmailAndUserIdNot(personDto.getUserEmail(), userId)) {
             errorMessages.add("Person with email already exists. ");
         }
 
@@ -80,17 +80,17 @@ public class PersonServiceHelper {
         log.info("Validating data integrity for updating user ID: {}", userId);
         List<String> errorMessages = new ArrayList<>();
 
-        Account account = accountRepository.findById(userId)
+        User User = UserRepository.findById(userId)
                 .orElseThrow(() -> {
                     log.error("Integrity validation failed: User not found with ID: {}", userId);
                     return new IllegalArgumentException("Person not found");
                 });
 
-        if (!personDto.getUserIdentification().equals(account.getUserIdentification())) {
+        if (!personDto.getUserIdentification().equals(User.getUserIdentification())) {
             errorMessages.add("The identification cannot be changed.");
         }
 
-        if (!personDto.getUserTypeIdentification().equals(account.getTypeIdentification().getTypeId())) {
+        if (!personDto.getUserTypeIdentification().equals(User.getTypeIdentification().getTypeId())) {
             errorMessages.add("The type of identification cannot be changed.");
         }
 
@@ -101,15 +101,15 @@ public class PersonServiceHelper {
         log.info("Data integrity validation passed successfully for user ID: {}", userId);
     }
 
-    public Account updateAccount(UserDetailsDto personDto, Account existingAccount) {
-        log.info("Updating account roles/status for user ID: {}", existingAccount.getUserId());
+    public User updateUser(UserDetailsDto personDto, User existingUser) {
+        log.info("Updating User roles/status for user ID: {}", existingUser.getUserId());
         
         // 1. Extract incoming role IDs from the DTO, ensuring it's not null
         List<Long> incomingRoleIds = personDto.getUserRoles() != null ? personDto.getUserRoles() : List.of();
         log.info("Incoming roles count: {}", incomingRoleIds.size());
 
-        // Extract existing roles of the account
-        List<Long> existingRoleIds = existingAccount.getUserRoles().stream()
+        // Extract existing roles of the User
+        List<Long> existingRoleIds = existingUser.getUserRoles().stream()
                 .map(userRole -> userRole.getRole().getRoleId())
                 .toList();
 
@@ -120,7 +120,7 @@ public class PersonServiceHelper {
 
         // Update the status of existing roles based on the new roles
         log.info("Updating statuses for {} existing roles", existingRoleIds.size());
-        existingAccount.getUserRoles().forEach(userRole -> {
+        existingUser.getUserRoles().forEach(userRole -> {
             if (incomingRoleIds.contains(userRole.getRole().getRoleId())) {
                 userRole.setStatus(ACTIVE_STATUS);
             } else {
@@ -128,12 +128,12 @@ public class PersonServiceHelper {
             }
         });
 
-        log.info("Found {} new role(s) to add to user ID: {}", newRoleIds.size(), existingAccount.getUserId());
+        log.info("Found {} new role(s) to add to user ID: {}", newRoleIds.size(), existingUser.getUserId());
 
-        // Add new roles that are not currently associated with the account
+        // Add new roles that are not currently associated with the User
         List<ApplicationUserRole> newRoles = newRoleIds.stream()
                 .map(roleId -> ApplicationUserRole.builder()
-                        .user(existingAccount)
+                        .user(existingUser)
                         .role(Role.builder()
                         .roleId(roleId)
                         .build())
@@ -142,27 +142,27 @@ public class PersonServiceHelper {
                         .build())
                 .toList();
 
-        existingAccount.getUserRoles().addAll(newRoles);
+        existingUser.getUserRoles().addAll(newRoles);
 
-        log.info("Roles updated successfully in memory for user ID: {}", existingAccount.getUserId());
-        return existingAccount;
+        log.info("Roles updated successfully in memory for user ID: {}", existingUser.getUserId());
+        return existingUser;
     }
 
-    public Account disableAccount(UserDetailsDto personDto, Account existingAccount) {
-        log.info("Disabling account globally for user ID: {}", existingAccount.getUserId());
+    public User disableUser(UserDetailsDto personDto, User existingUser) {
+        log.info("Disabling User globally for user ID: {}", existingUser.getUserId());
 
-        // Disable the account
-        existingAccount.setStatus(INACTIVE_STATUS);
+        // Disable the User
+        existingUser.setStatus(INACTIVE_STATUS);
 
         // Update the associated roles to inactive
         log.info("Synchronizing incoming roles before applying global inactive status");
-        existingAccount = updateAccount(personDto, existingAccount);
+        existingUser = updateUser(personDto, existingUser);
 
-        log.info("Forcing inactive status on all {} roles", existingAccount.getUserRoles().size());
-        existingAccount.getUserRoles().forEach(userRole -> userRole.setStatus(INACTIVE_STATUS));
+        log.info("Forcing inactive status on all {} roles", existingUser.getUserRoles().size());
+        existingUser.getUserRoles().forEach(userRole -> userRole.setStatus(INACTIVE_STATUS));
 
-        log.info("User and {} roles have been successfully marked as inactive in memory", existingAccount.getUserRoles().size());
-        return existingAccount;
+        log.info("User and {} roles have been successfully marked as inactive in memory", existingUser.getUserRoles().size());
+        return existingUser;
     }
 
 }

@@ -1,9 +1,9 @@
 package com.yapps.senaempresa.utils.helper;
 
-import com.yapps.senaempresa.model.entity.Account;
-import com.yapps.senaempresa.model.entity.InventoryHistory;
+import com.yapps.senaempresa.model.entity.User;
+import com.yapps.senaempresa.model.entity.InventoryMovements;
 import com.yapps.senaempresa.model.entity.Product;
-import com.yapps.senaempresa.repository.InventoryHistoryRepository;
+import com.yapps.senaempresa.repository.InventoryMovementsRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -11,19 +11,19 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class InventoryServiceHelper {
 
-    private final InventoryHistoryRepository inventoryHistoryRepository;
+    private final InventoryMovementsRepository inventoryMovementsRepository;
 
-    public void recordHistory(Product product, Integer quantity, Long receivedBy, Long deliveredBy) {
-        InventoryHistory history = InventoryHistory.builder()
+    public void recordMovement(Product product, Integer quantity, Long receivedBy, Long deliveredBy) {
+        InventoryMovements Movements = InventoryMovements.builder()
                 .product(product)
-                .deliveredBy(Account.builder()
-                .userId(deliveredBy)
-                .build())
-                .receivedBy(Account.builder()
-                .userId(receivedBy)
-                .build())
+                .deliveredBy(User.builder()
+                        .userId(deliveredBy)
+                        .build())
+                .receivedBy(User.builder()
+                        .userId(receivedBy)
+                        .build())
                 .quantity(quantity)
                 .build();
-        inventoryHistoryRepository.save(history);
+        inventoryMovementsRepository.save(Movements);
     }
 }

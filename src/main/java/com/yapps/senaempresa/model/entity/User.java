@@ -24,7 +24,7 @@ import java.util.List;
 @Data
 @Table(name = "USERS")
 @EntityListeners(AuditingEntityListener.class)
-public class Account implements UserDetails {
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

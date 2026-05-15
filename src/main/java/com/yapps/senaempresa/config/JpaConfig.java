@@ -1,6 +1,6 @@
 package com.yapps.senaempresa.config;
 
-import com.yapps.senaempresa.model.entity.Account;
+import com.yapps.senaempresa.model.entity.User;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -23,8 +23,8 @@ public class JpaConfig {
                 return Optional.empty();
             }
 
-            Account account = (Account) authentication.getPrincipal();
-            return Optional.of(account.getUserId());
+            User User = (User) authentication.getPrincipal();
+            return Optional.of(User.getUserId());
         };
     }
 }

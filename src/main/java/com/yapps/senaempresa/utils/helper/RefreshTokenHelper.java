@@ -1,6 +1,6 @@
 package com.yapps.senaempresa.utils.helper;
 
-import com.yapps.senaempresa.model.entity.Account;
+import com.yapps.senaempresa.model.entity.User;
 import com.yapps.senaempresa.model.entity.RefreshToken;
 import com.yapps.senaempresa.repository.RefreshTokenRepository;
 import com.yapps.senaempresa.utils.enums.StatusEnum;
@@ -31,15 +31,15 @@ public class RefreshTokenHelper {
     private static final SecureRandom secureRandom = new SecureRandom();
     private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
 
-    public String generateRefreshToken(Account account) {
+    public String generateRefreshToken(User User) {
 
         // Invalidate existing tokens for the user
-        invalidateExistingTokens(account);
+        invalidateExistingTokens(User);
 
         String tokenValue = generateSecureToken();
 
         RefreshToken refreshToken = RefreshToken.builder()
-                .user(account)
+                .user(User)
                 .refreshToken(hash(tokenValue))
                 .expiresAt(Instant.now().plusMillis(refreshTokenDurationMs))
                 .createdAt(LocalDateTime.now())
@@ -64,7 +64,7 @@ public class RefreshTokenHelper {
                 .orElseThrow(() -> new RuntimeException("Refresh token not found"));
     }
 
-    private void invalidateExistingTokens(Account user) {
+    private void invalidateExistingTokens(User user) {
         List<RefreshToken> existingTokens = refreshTokenRepository.findAllByUserAndStatus(user, ACTIVE_STATUS);
         refreshTokenRepository.deleteAll(existingTokens);
     }

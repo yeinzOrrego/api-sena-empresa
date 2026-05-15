@@ -30,7 +30,7 @@ public class ApplicationUserRole {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "user_id", nullable = false)
-	private Account user;
+	private User user;
 
 	@Column(nullable = false, length = 1)
 	private String status;

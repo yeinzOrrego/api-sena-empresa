@@ -35,5 +35,5 @@ public class RefreshToken {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    private Account user;
+    private User user;
 }
