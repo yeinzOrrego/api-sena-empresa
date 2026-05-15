@@ -15,11 +15,13 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PlantationInventoryRepository extends JpaRepository<PlantationInventory, String>, JpaSpecificationExecutor<PlantationInventory> {
+public interface PlantationInventoryRepository extends JpaRepository<PlantationInventory, Long>, JpaSpecificationExecutor<PlantationInventory> {
     List<PlantationInventory> findByProductProductId(Long productId);
-    Optional<PlantationInventory> findByPlantationInventoryIdAndProduct(String plantationInventoryId, Product product);
+    Optional<PlantationInventory> findByPlantationInventoryIdAndProduct(Long plantationInventoryId, Product product);
 
     @Override
     @EntityGraph(attributePaths = {"product"})
     Page<PlantationInventory> findAll(Specification<PlantationInventory> spec, Pageable pageable);
+
+    boolean existsByInventoryCode(String inventoryCode);
 }

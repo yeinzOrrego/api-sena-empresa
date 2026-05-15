@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -21,8 +20,11 @@ import java.time.LocalDateTime;
 public class PlantationInventory {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long plantationInventoryId;
+
     @Column(nullable = false, length = 50, unique = true)
-    private String plantationInventoryId;
+    private String inventoryCode;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
@@ -34,7 +36,9 @@ public class PlantationInventory {
     @Column(nullable = false)
     private Integer availableQuantity;
 
-    @CreatedDate
+    @Column(nullable = false, length = 1)
+    private String status;
+
     @Column(nullable = false)
     private LocalDateTime productionDate;
 }

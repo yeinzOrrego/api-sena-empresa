@@ -11,7 +11,7 @@ public class TransferStockDto {
     private Long productId;
 
     @NotBlank(message = "Inventory source is required")
-    private String inventorySource;
+    private Long inventorySource;
 
     @NotNull(message = "Quantity to transfer is required")
     @Min(value = 1, message = "Quantity must be greater than zero")

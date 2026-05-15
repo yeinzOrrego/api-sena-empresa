@@ -59,14 +59,19 @@ public class InventoryServiceImpl extends EcosystemService implements InventoryS
         Product product = productRepository.findProductByProductId(produceStockDto.getProductId())
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
 
+        boolean existingInventory = plantationInventoryRepository.existsByInventoryCode(produceStockDto.getInventoryCode());
+        if (existingInventory) {
+            throw new IllegalArgumentException("Inventory with code " + produceStockDto.getInventoryCode() + " already exists");
+        }
+
         PlantationInventory plantationInventory = mapper.toEntity(produceStockDto);
         plantationInventory.setProduct(product);
 
         plantationInventory = plantationInventoryRepository.save(plantationInventory);
 
         return ProcessResult.<String>builder()
-                .result(plantationInventory.getPlantationInventoryId())
-                .message("Inventory " + plantationInventory.getPlantationInventoryId() + " created successfully")
+                .result(plantationInventory.getInventoryCode())
+                .message("Inventory " + plantationInventory.getInventoryCode() + " created successfully")
                 .resultCode((long) HttpStatus.CREATED.value())
                 .build();
     }

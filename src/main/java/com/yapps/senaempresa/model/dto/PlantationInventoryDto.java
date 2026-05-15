@@ -5,7 +5,8 @@ import java.time.LocalDateTime;
 
 @Data
 public class PlantationInventoryDto {
-    private String plantationInventoryId;
+    private Long plantationInventoryId;
+    private String inventoryCode;
     private Long productId;
     private Integer producedQuantity;
     private Integer availableQuantity;
