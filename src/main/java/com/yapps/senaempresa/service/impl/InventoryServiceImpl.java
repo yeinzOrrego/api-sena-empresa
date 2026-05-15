@@ -11,6 +11,7 @@ import com.yapps.senaempresa.model.entity.Product;
 import com.yapps.senaempresa.repository.PlantationInventoryRepository;
 import com.yapps.senaempresa.repository.ProductRepository;
 import com.yapps.senaempresa.service.InventoryService;
+import com.yapps.senaempresa.utils.enums.StatusEnum;
 import com.yapps.senaempresa.utils.helper.InventoryServiceHelper;
 import com.yapps.senaempresa.utils.mapper.InventoryMapper;
 import com.yapps.senaempresa.utils.response.ProcessResult;
@@ -35,6 +36,8 @@ public class InventoryServiceImpl extends EcosystemService implements InventoryS
     
     private final InventoryMapper mapper;
     private final InventoryServiceHelper helper;
+
+    private static final String ACTIVE_STATUS = StatusEnum.ACTIVO.getValue();
 
     @Override
     @Transactional(readOnly = true)
@@ -65,6 +68,7 @@ public class InventoryServiceImpl extends EcosystemService implements InventoryS
         }
 
         PlantationInventory plantationInventory = mapper.toEntity(produceStockDto);
+        plantationInventory.setStatus(ACTIVE_STATUS);
         plantationInventory.setProduct(product);
 
         plantationInventory = plantationInventoryRepository.save(plantationInventory);
