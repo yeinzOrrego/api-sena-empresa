@@ -6,9 +6,15 @@ import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProduceStockDto {
     @NotBlank(message = "Inventory code is required")
     private String inventoryCode;
@@ -26,5 +32,5 @@ public class ProduceStockDto {
 
     @NotNull(message = "Production date is required")
     @PastOrPresent(message = "Production date cannot be in the past")
-    private LocalDateTime dateCreated;
+    private LocalDateTime productionDate;
 }

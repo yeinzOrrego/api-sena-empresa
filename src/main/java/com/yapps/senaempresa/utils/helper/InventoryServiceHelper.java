@@ -1,9 +1,12 @@
 package com.yapps.senaempresa.utils.helper;
 
 import com.yapps.senaempresa.model.entity.User;
+import com.yapps.senaempresa.model.dto.TransferStockDto;
 import com.yapps.senaempresa.model.entity.InventoryMovements;
+import com.yapps.senaempresa.model.entity.PlantationInventory;
 import com.yapps.senaempresa.model.entity.Product;
 import com.yapps.senaempresa.repository.InventoryMovementsRepository;
+import com.yapps.senaempresa.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,18 +15,21 @@ import org.springframework.stereotype.Component;
 public class InventoryServiceHelper {
 
     private final InventoryMovementsRepository inventoryMovementsRepository;
+    private final UserRepository userRepository;
 
-    public void recordMovement(Product product, Integer quantity, Long receivedBy, Long deliveredBy) {
-        InventoryMovements Movements = InventoryMovements.builder()
+    public InventoryMovements recordMovement(Product product, TransferStockDto transferStockDto, String status) {
+        User receivedUser = userRepository.findById(transferStockDto.getReceivedBy())
+                .orElseThrow(() -> new IllegalArgumentException("Receiving user not found"));
+
+        InventoryMovements movement = InventoryMovements.builder()
                 .product(product)
-                .deliveredBy(User.builder()
-                        .userId(deliveredBy)
+                .receivedBy(receivedUser)
+                .quantity(transferStockDto.getQuantity())
+                .status(status)
+                .sourceInventory(PlantationInventory.builder()
+                        .plantationInventoryId(transferStockDto.getSourceInventory())
                         .build())
-                .receivedBy(User.builder()
-                        .userId(receivedBy)
-                        .build())
-                .quantity(quantity)
                 .build();
-        inventoryMovementsRepository.save(Movements);
+        return inventoryMovementsRepository.save(movement);
     }
 }

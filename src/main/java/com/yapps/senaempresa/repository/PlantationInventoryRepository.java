@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 public interface PlantationInventoryRepository extends JpaRepository<PlantationInventory, Long>, JpaSpecificationExecutor<PlantationInventory> {
-    List<PlantationInventory> findByProductProductId(Long productId);
+    List<PlantationInventory> findByProductProductIdOrderByProductionDateDesc(Long productId);
     Optional<PlantationInventory> findByPlantationInventoryIdAndProduct(Long plantationInventoryId, Product product);
 
     @Override

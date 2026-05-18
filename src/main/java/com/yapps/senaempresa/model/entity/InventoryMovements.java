@@ -28,7 +28,7 @@ public class InventoryMovements {
     private Product product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivered_by", nullable = false)
+    @JoinColumn(name = "delivered_by", nullable = true)
     private User deliveredBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -37,6 +37,13 @@ public class InventoryMovements {
 
     @Column(nullable = false)
     private Integer quantity;
+
+    @Column(nullable = false, length = 1)
+    private String status;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "plantation_inventory_id", nullable = false)
+    private PlantationInventory sourceInventory;
 
     @CreatedDate
     @Column(nullable = false, updatable = false)

@@ -5,16 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class InventoryHistoryDto {
-    private Long historyId;
-    private ProductDetailsDto product;
+public class TransferNotificationDto {
+    private Long movementId;
+    private String productName;
     private Integer quantity;
-    private String description;
-    private LocalDateTime dateCreated;
+    private String status;
+    private String receivedByName;
 }

@@ -4,6 +4,7 @@ import com.ada.ecosystem.core.v1.pageable.PageDto;
 import com.ada.ecosystem.core.v1.query.EcosystemRequestQuery;
 import com.yapps.senaempresa.model.dto.PlantationInventoryDto;
 import com.yapps.senaempresa.model.dto.ProduceStockDto;
+import com.yapps.senaempresa.model.dto.ResolveTransferDto;
 import com.yapps.senaempresa.model.dto.TransferStockDto;
 import com.yapps.senaempresa.service.InventoryService;
 import com.yapps.senaempresa.utils.response.ProcessResult;
@@ -15,6 +16,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -40,8 +42,15 @@ public class InventoryController {
         return new ResponseEntity<>(inventoryService.produceStock(produceStockDto), HttpStatus.OK);
     }
 
-    @PostMapping("/transfer")
-    public ResponseEntity<ProcessResult<String>> transferToCommercial(@Valid @RequestBody TransferStockDto transferStockDto) {
-        return new ResponseEntity<>(inventoryService.transferToCommercial(transferStockDto), HttpStatus.OK);
+    @PostMapping("/transfer/request")
+    @PreAuthorize("hasAnyRole('PUNTO DE VENTA', 'ADMINISTRADOR')")
+    public ResponseEntity<ProcessResult<Long>> requestTransfer(@Valid @RequestBody TransferStockDto transferStockDto) {
+        return new ResponseEntity<>(inventoryService.requestTransfer(transferStockDto), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/transfer/resolve")
+    @PreAuthorize("hasAnyRole('PLANTACION', 'ADMINISTRADOR')")
+    public ResponseEntity<ProcessResult<Long>> resolveTransfer(@Valid @RequestBody ResolveTransferDto resolveTransferDto) {
+        return new ResponseEntity<>(inventoryService.resolveTransfer(resolveTransferDto), HttpStatus.OK);
     }
 }
