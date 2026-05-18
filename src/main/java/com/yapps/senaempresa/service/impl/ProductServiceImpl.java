@@ -54,7 +54,7 @@ public class ProductServiceImpl extends EcosystemService implements ProductServi
     @Transactional(readOnly = true)
     public ProductDetailsDto getProductById(Long id) {
         log.info("Fetching product details for ID: {}", id);
-        Product product = productRepository.findById(id)
+        Product product = productRepository.findDetailedByProductId(id)
                 .orElseThrow(() -> {
                     log.warn("Product not found with ID: {}", id);
                     return new IllegalArgumentException("Product not found with ID: " + id);

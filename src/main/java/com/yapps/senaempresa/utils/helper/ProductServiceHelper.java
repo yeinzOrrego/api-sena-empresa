@@ -92,11 +92,7 @@ public class ProductServiceHelper {
 
         List<String> errorMessages = new ArrayList<>();
         
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> {
-                    log.error("Integrity validation failed: Product not found with ID: {}", productId);
-                    return new IllegalArgumentException("Product not found");
-                });
+        Product product = productRepository.findProductWithAttachmentByProductId(productId);
 
         if (!productDto.getBarCode().equals(product.getBarCode())) {
             log.warn("Data integrity validation failed for product ID {}: The bar code cannot be changed.", productId);

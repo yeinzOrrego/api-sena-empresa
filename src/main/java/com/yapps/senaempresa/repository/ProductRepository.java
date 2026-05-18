@@ -17,14 +17,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @EntityGraph(attributePaths = {"attachment"})
     Page<Product> findAll(Specification<Product> specification, Pageable pageable);
 
-    @Override
     @EntityGraph(attributePaths = {"unitMeasure", "attachment", "inventory"})
-    Optional<Product> findById(Long id);
-
-    Optional<Product> findProductByProductId(Long id);
+    Optional<Product> findDetailedByProductId(Long id);
 
     @EntityGraph(attributePaths = {"inventory"})
     Product findProductWithInventoryByProductId(Long id);
+
+    @EntityGraph(attributePaths = {"attachment"})
+    Product findProductWithAttachmentByProductId(Long id);
 
     boolean existsByBarCode(String barCode);
 
