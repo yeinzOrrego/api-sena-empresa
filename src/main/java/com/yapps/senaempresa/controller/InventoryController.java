@@ -27,29 +27,32 @@ public class InventoryController {
     private final InventoryService inventoryService;
 
     @GetMapping("/plantation")
+    @PreAuthorize("hasAnyRole('PLANTACION', 'PUNTO DE VENTA')")
     public ResponseEntity<PageDto<PlantationInventoryDto>> getAllPlantationInventories(
             @RequestBody(required = true) EcosystemRequestQuery ecosystemRequestQuery) {
         return new ResponseEntity<>(inventoryService.getAllPlantationInventories(ecosystemRequestQuery), HttpStatus.OK);
     }
 
     @GetMapping("/plantation/product/{productId}")
+    @PreAuthorize("hasAnyRole('PLANTACION', 'PUNTO DE VENTA')")
     public ResponseEntity<List<PlantationInventoryDto>> getPlantationInventory(@PathVariable Long productId) {
         return new ResponseEntity<>(inventoryService.getPlantationInventoryByProductId(productId), HttpStatus.OK);
     }
 
     @PostMapping("/produce")
+    @PreAuthorize("hasRole('PLANTACION')")
     public ResponseEntity<ProcessResult<String>> produceStock(@Valid @RequestBody ProduceStockDto produceStockDto) {
         return new ResponseEntity<>(inventoryService.produceStock(produceStockDto), HttpStatus.OK);
     }
 
     @PostMapping("/transfer/request")
-    @PreAuthorize("hasAnyRole('PUNTO DE VENTA', 'ADMINISTRADOR')")
+    @PreAuthorize("hasRole('PUNTO DE VENTA')")
     public ResponseEntity<ProcessResult<Long>> requestTransfer(@Valid @RequestBody TransferStockDto transferStockDto) {
         return new ResponseEntity<>(inventoryService.requestTransfer(transferStockDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/transfer/resolve")
-    @PreAuthorize("hasAnyRole('PLANTACION', 'ADMINISTRADOR')")
+    @PreAuthorize("hasRole('PLANTACION')")
     public ResponseEntity<ProcessResult<Long>> resolveTransfer(@Valid @RequestBody ResolveTransferDto resolveTransferDto) {
         return new ResponseEntity<>(inventoryService.resolveTransfer(resolveTransferDto), HttpStatus.OK);
     }
